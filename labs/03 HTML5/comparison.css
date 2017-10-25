@@ -1,0 +1,30 @@
+table {
+    border-style: solid;
+    border-width: thin;
+}
+
+th {
+    background-color: red;
+    color: white;
+    border-style: solid;
+    border-width: thick;
+    border-color: red;
+    text-transform: uppercase;
+}
+
+caption {
+    font-weight: bold;
+    border-style: solid;
+    border-width: thin;
+    text-transform: uppercase;
+}
+
+.part {
+    font-weight: bold;
+    border-right-style: solid;
+    border-right-width: thin;
+}
+
+.dark {
+    background-color: rgb(240,240,240);
+}

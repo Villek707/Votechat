@@ -3,6 +3,7 @@
 <head>
     <title>Comparison of three computers</title>
     <meta charset="utf-8" />
+    <link href="comparison.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <p>A comparison of technical data of three popular 80's home computers:</p>
@@ -14,27 +15,41 @@
         <th>Property</th>
         <th>Commodore 64</th>
         <th>ZX Spectrum</th>
-        <th>Commodore VIC-20</th>    
+        <th>Commodore VIC-20</th>
+        <th>Spectravideo SV-328</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td>CPU</td>
+        <td class="part">CPU</td>
         <td>MOS Technology 6510</td>
         <td>Zilog Z80</td>
         <td>MOS Technology 6502</td>
+        <td>Zilog Z80A</td>
     </tr>
-    <tr>
-        <td>RAM</td>
+    <tr class="dark">
+        <td class="part">RAM</td>
         <td>64 kilobytes</td>
         <td>16 or 64 kilobytes</td>
         <td>5 kilobytes</td>
+        <td>64kB</td>
     </tr>
     <tr>
-        <td>ROM</td>
+        <td class="part">ROM</td>
         <td>20 kilobytes</td>
         <td>16 kilobytes</td>
         <td>16 kilobytes</td>
+        <td>32kB</td>
+    </tr>
+    <tr class="dark">
+        <td class="part">Main usage</td>
+        <td colspan="4">Home computing</td>
+    </tr>
+    <tr>
+        <td class="part">Killer game</td>
+        <td colspan="2">Jet Set Willy</td>
+        <td>Jelly Monsters</td>
+        <td>Armoured Assault</td>
     </tr>
     </tbody>
 </table>
