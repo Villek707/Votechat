@@ -1,0 +1,10 @@
+figure {
+    float: left;
+}
+
+footer {
+    float: left;
+    border: 1px solid black;
+    margin: 2em;
+    padding: 1em;
+}

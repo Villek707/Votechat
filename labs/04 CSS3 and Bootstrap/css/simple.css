@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, Verdana, sans-serif;
+    background-color: rgb(200,200,200);
+    
+}
+
+h1, h2 {
+    color: rgb(255,0,0);
+    font-weight: bold;
+}
+
+ul, ol, dl {
+    border-style: solid;
+    text-indent: 50px;
+}
+
+li {
+    color: darkgrey;
+}
+
+figure {
+    font-size: smaller;
+    font-weight: bold;
+}
+
+p {
+    text-indent: 50px;
+}
+
+.copyright_notice {
+    font-size: 0.8em;
+}
+
+#special {
+    font-size: 0.8em;
+    color: yellowgreen;
+    font-style: italic;
+    border-left: 2px solid black;
+    margin-left: 40px;
+    padding-left: 10px;
+}
+
+#koodi {
+    text-indent: 35px;
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+}
+
+p::first-letter {
+    font-size:8em;
+}
+
+p::first-line {
+    font-weight: bold;
+}

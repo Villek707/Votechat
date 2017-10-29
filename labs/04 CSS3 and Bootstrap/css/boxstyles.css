@@ -1,0 +1,26 @@
+p.one {
+    border: 1px solid black;
+    padding: 3em;
+    margin:  1em;
+    margin-bottom: 0em;
+}
+
+p.two {
+    border: 1px solid black;
+    margin:  5em;
+    margin-top: 0;
+}
+
+p.three {
+    border-left: 3px solid black;
+    padding: 1em;
+    padding-top: 0;
+    margin-top:  2em;
+    margin-bottom: 8em;
+}
+
+p.four {
+    border: 5px dashed red;
+    border-radius: 1em; 
+
+}

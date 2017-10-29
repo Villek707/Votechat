@@ -8,10 +8,12 @@ p {
 
 h1.alert {
     font-size: 3em;
+    text-decoration: none;
 }
 
 .alert {
     color: red;
+    text-decoration: underline;
 }
 
 p#unique {
