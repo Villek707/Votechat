@@ -11,4 +11,9 @@
 		"quotes": [2, "single"],
 	    "semi": [2, "always", { "omitLastInOneLineBlock": true}]
     }
+    "globals": {
+    "console": false,
+    "document": false
+	}
+
 }
