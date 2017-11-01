@@ -48,10 +48,3 @@ p {
     margin: 1em 0;
 }
 
-p::first-letter {
-    font-size:8em;
-}
-
-p::first-line {
-    font-weight: bold;
-}
