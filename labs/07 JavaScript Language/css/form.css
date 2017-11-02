@@ -90,3 +90,12 @@ font-weight:bold;
 	margin-bottom: 10px;
 	color: blue;
 }
+
+#dupe {
+ margin-left:250px;
+ margin-top:20px;
+ border-style: solid;
+ border-width: thin;
+ padding:10px;
+ background-color:white;
+}
