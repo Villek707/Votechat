@@ -27,21 +27,21 @@ function ajaxFunction(){
 	// Create a function that will receive data sent from the server
 	ajaxRequest.onreadystatechange = function(){
 		if(ajaxRequest.readyState == 4){
-			document.myForm.time.value = ajaxRequest.responseText;
+			document.myForm.rand.value = ajaxRequest.responseText;
 		}
 	}
 	ajaxRequest.open("GET", "php/serverTime.php", true);
-	ajaxRequest.send(null); 
+	ajaxRequest.send(null);
 }
-
 
 </script>
 
 <form name='myForm'>
-Name: <input type='text' onChange="ajaxFunction();" name='username' /> <br />
-Time: <input type='text' name='time' />
-
+Name: <input type='text' onChange="ajaxFunctionTime();" name='username' /> <br />
+Time: <input type='text' name='time' /> <br />
+Random number: <input type='text' name='rand' />
 </form>
+<button type='button' onclick='ajaxFunction();'>Random number</button>
 </body>
 </html>
 
