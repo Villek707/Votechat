@@ -32,4 +32,10 @@ if (!empty($_GET['location'])){
  // give it back to Javascript
   
 }
+
+$q = $_REQUEST["q"];
+if ($q===1) {
+  echo $maps_json;
+}
+
 ?>

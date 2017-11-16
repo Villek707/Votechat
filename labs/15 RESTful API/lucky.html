@@ -1,0 +1,25 @@
+ <!DOCTYPE html>
+<html>
+<body>
+
+<button type="button" onclick="luckyButton()">Get lucky!</button>
+<p id="result"></p>
+<script>
+    function luckyButton() {
+        var text = document.getElementById("result");
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                console.log(xmlhttp.responseText);
+                var jsonobj = JSON.parse(xmlhttp.responseText);
+                text.innerHTML = JSON.stringify(jsonobj);
+            }
+        };
+        xmlhttp.open("GET", "https://gittutorial-villek.c9users.io/staffapi/lucky", true);
+        xmlhttp.send();
+    }
+</script>
+
+
+</body>
+</html> 
