@@ -21,21 +21,19 @@ if (!empty($_GET['location'])){
    * Time to make our Instagram api request. We'll build the url using the
    * coordinate values returned by the google maps api
    */
-  $instagram_url = 'https://'.
-    'api.instagram.com/v1/media/search' .
-    '?lat=' . $lat .
-    '&lng=' . $lng .
-    '&client_id=CLIENT-ID'; //replace "CLIENT-ID"
-  $instagram_json = file_get_contents($instagram_url);
-  $instagram_array = json_decode($instagram_json, true);
-  
+  $woeid_url = 'https://www.metaweather.com/api/location/search/?lattlong='.$lat.','.$lng;
+  $woeid_json = file_get_contents($woeid_url);
+  $woeid_array = json_decode($woeid_json, true);
+  $woeid = $woeid_array[0]['woeid'];
+  $weather_url = 'https://www.metaweather.com/api/location/'.$woeid;
+  $weather_json = file_get_contents($weather_url);
+  $weather_json = json_encode(json_decode($weather_json, true), JSON_PRETTY_PRINT);
+  $q = $_GET["q"];
+  if ($q==1) {
+    echo "<pre>".$weather_json."</pre>";
+  } 
  // give it back to Javascript
   
-}
-
-$q = $_REQUEST["q"];
-if ($q===1) {
-  echo $maps_json;
 }
 
 ?>

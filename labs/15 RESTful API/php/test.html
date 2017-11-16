@@ -8,27 +8,25 @@
       
   <!-- call a Javascript function to send an XMLHttpRequest -->
   <script>
-    window.onload = function() {
+    function geogram() {
+      var location = document.getElementById("loc")
       var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 console.log(xmlhttp.responseText);
-                var jsonobj = JSON.parse(xmlhttp.responseText);
-                var suggestionstring = jsonobj.map(function(item) {
-                    return item['firstname'];
-                });
-                document.getElementById("txtHint").innerHTML = suggestionstring;
+                document.getElementById("return").innerHTML = xmlhttp.responseText;
             }
         };
-        xmlhttp.open("GET", "geogram.php?q=1", true);
+        xmlhttp.open("GET", "geogram.php?q=1&location=" + location.value, true);
         xmlhttp.send();
     };
   </script>
   
   
   <form action="geogram.php" method="get">
-    <input type="text" name="location"/>
-    <button type="submit">Submit</button>
+    <input type="text" id="loc" name="location"/>
+    <button type="button" onclick=geogram()>Submit</button>
+    <p id="return"></p>
   </form>
     <br/>
     
