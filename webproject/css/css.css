@@ -1,0 +1,30 @@
+/*
+TODO
+    Pitkien viestien jakaminen useammalle riville
+    hajurako viestien ja scrollbarin väliin
+    (my)messaget hajoo jos niihin laittaa marginit tai paddingit
+    kuvaavampi nimi "kokonaisuus" classille på engelska... content? 
+*/
+
+.scroll { 
+    width: 20%;
+    height: 20%;
+    overflow: auto;
+}
+
+.kokonaisuus {
+    margin: 30px;
+}
+
+.message {
+    margin: 0;
+    padding: 0;
+}
+
+.myMessage {
+    float: right;
+}
+
+.theirMessage {
+    float: left;
+}
