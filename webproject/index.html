@@ -1,6 +1,4 @@
 <!-- TODO
-    äänestys systeemi
-        dynaaminen äänestys artikkelien luonti JSllä
     chat
     login 
         login vois olla enemmänki käytä nimeä, että voit käyttää palvelua tyyppinen, eikä kirjaudu accountille missä on salasana + käyttäjänimi 
@@ -22,8 +20,12 @@
     </div>
     
     <div id="vote" class="kokonaisuus">
+        <div id="voteOptions">
+        </div>
         <div>
-            Äänestys artikkelit luodaan dynaamisesti JSllä
+        <input type="text" id="voteOptionInput" name="vote" placeholder="Enter vote option...">   
+        <button id="addVoteOptionButton">Add vote option</button> 
+        <button id="createVoteButton">Create vote</button>
         </div>
     </div>
     

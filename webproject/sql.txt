@@ -1,0 +1,47 @@
+// create vote table
+CREATE TABLE Vote (
+	VoteID int NOT NULL AUTO_INCREMENT,
+	VoteName varchar(255),
+	PRIMARY KEY (VoteID)
+);
+
+
+CREATE TABLE VoteOptionTable (
+	VoteOptionID int NOT NULL AUTO_INCREMENT,
+	VoteOption varchar(255),
+	Votes int DEFAULT '0',
+	VoteID int,
+	PRIMARY KEY (VoteOptionID),
+	FOREIGN KEY (VoteID) REFERENCES Vote(VoteID)
+);
+
+// create comment table
+CREATE TABLE Comment (
+	CommentID int NOT NULL AUTO_INCREMENT,
+	UserName varchar(255) NOT NULL,
+	Comment varchar(255) NOT NULL,
+	VoteID int,
+	PRIMARY KEY (CommentID),
+	FOREIGN KEY (VoteID) REFERENCES Vote(VoteID)
+);
+
+// create vote
+INSERT INTO Vote (VoteName) VALUES ('#VoteName');
+
+// insert data to vote optiontable link to vote table
+INSERT INTO VoteOptionTable (VoteOption, VoteID) VALUES ('#VoteOption', '#VoteID');
+
+// insert data to comment table link to vote table
+INSERT INTO Comment (UserName, Comment, VoteID) VALUES ('#UserName', '#Comment', '#VoteID');
+
+// vote option
+UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOption='#VoteOption' AND VoteID='#VoteID';
+
+// select comments from comment
+SELECT UserName, Comment FROM Comment WHERE VoteId='#VoteID';
+
+// select vote name
+SELECT VoteName FROM Vote WHERE VoteId='#VoteID';
+
+// select votes
+SELECT VoteOption, Votes FROM VoteOptionTable WHERE VoteId='#VoteID';

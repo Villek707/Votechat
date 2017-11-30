@@ -1,6 +1,6 @@
 Äänestys- ja keskustelupalvelu
-A web-project by Ville Kautonen and Jerry Hällfors.
-27.11.2017
+A web-project by Ville Kautonen, Jerry Hällfors and Janne Huotari.
+29.11.2017
 
 Äänestys- ja keskustelupalvelu is a web-project, which aim is to create a web service 
 with a client-side and a server-side implementation. 

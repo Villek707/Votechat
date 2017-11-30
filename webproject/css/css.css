@@ -3,6 +3,7 @@ TODO
     Pitkien viestien jakaminen useammalle riville
     hajurako viestien ja scrollbarin väliin
     (my)messaget hajoo jos niihin laittaa marginit tai paddingit
+    chat teksti inputti + nappula ja chatLogi yhtä leveiks
     kuvaavampi nimi "kokonaisuus" classille på engelska... content? 
 */
 
@@ -27,4 +28,8 @@ TODO
 
 .theirMessage {
     float: left;
+}
+
+.voteOption {
+    color:green; 
 }
