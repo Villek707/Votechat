@@ -1,5 +1,5 @@
 <?php
-
+    //=========================================== RESTAPI funktioita ===========================================
 # URI parser helper functions
 
     function getResource() {
@@ -40,29 +40,46 @@
  
 # Handlers for REST communication
 	function postMessage($parameters) {
-		#  POST /votechatapi/message/id=13&name="HandlerBing"&message="hey every1"
-		$name=urldecode($parameters["name"]);
-		$message=urldecode($parameters["message"]);
-		echo "Posted ".$parameters["id"]." ".$name." ".$message;
+		#  POST /votechatapi/message?json=jsonstring
+		$jsonstring=urldecode($parameters["json"]);
+		$json = json_decode($jsonstring);
+		dbAccess("INSERT INTO Comment (UserName, Comment, VoteID)
+        VALUES ('".$json->UserName."', '".$json->Comment."', '".$json->VoteID."')");
 	}
-
+    
+    
+	function postVote($parameters) {
+		#  POST /votechatapi/vote?json=jsonstring
+		$jsonstring=urldecode($parameters["json"]);
+		$json = json_decode($jsonstring);
+		dbAccess("INSERT INTO Vote (VoteName)
+        VALUES ('".$json->VoteName."')");
+	}
+	
+	
+	function postVoteOptionTable($parameters) {
+		#  POST /votechatapi/voteoptiontable?json=jsonstring
+		$jsonstring=urldecode($parameters["json"]);
+		$json = json_decode($jsonstring);
+		dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
+        VALUES ('".$json->VoteOption."', '".$json->VoteID."')");
+	}
+    
 	function getMessages() {
 		#  GET /votechatapi/messages
-		echo "Getting list of persons";
+		dbAccess("SELECT * FROM Comment"); 
 	}
-
-	function getPerson($id) {
-		# implements GET method for person 
-		# Example: GET /staffapi/person/13
-		echo "Getting person: ".$id;
+	
+	function getVote() {
+		#  GET /votechatapi/messages
+		dbAccess("SELECT * FROM Vote"); 
 	}
-
-	function deletePerson($id) {
-		# implements DELETE method for person 
-		# Example: DELETE /staffapi/person/13
-		echo "Deleting person: ".$id;
+	
+	function getVoteOptionTable() {
+		#  GET /votechatapi/messages
+		dbAccess("SELECT * FROM VoteOptionTable"); 
 	}
-
+	
 # Main
 # ----
 
@@ -75,14 +92,22 @@
     	if ($request_method=="POST" && $resource[1]=="message") {
         	postMessage($parameters);
     	}
+    	else if ($request_method=="POST" && $resource[1]=="vote") {
+			postVote($parameters);
+		}
+		else if ($request_method=="POST" && $resource[1]=="voteoptiontable") {
+			postVoteOptionTable($parameters);
+		}
 		else if ($request_method=="GET" && $resource[1]=="messages") {
 			getMessages();
-		} 
-		else if ($request_method=="GET" && $resource[1]=="person") {
-			getPerson($resource[2]);
+			//getFromDB("SELECT * FROM Comment WHERE CommentID=1");
 		}
-		else if ($request_method=="DELETE" && $resource[1]=="person") {
-			deletePerson($resource[2]);
+		
+		else if ($request_method=="GET" && $resource[1]=="vote") {
+			getVote();
+		}
+		else if ($request_method=="GET" && $resource[1]=="voteoptiontable") {
+			getVoteOptionTable();
 		}
 		else {
 			http_response_code(405); # Method not allowed
@@ -93,29 +118,37 @@
 	}
 	
 	//=========================================== MySQL funktioita ===========================================
+    //Selvisi sittenki, että kaikki tietokantakyselyt voidaan tehä yhel funktiol
 	
-	    // Päädyin MySQLihin
-    $servername = getenv('IP');
-    $username = getenv('C9_USER');
-    $password = "";
-    $database = "votechat";
-    $dbport = 3306;
+	function dbAccess($sqlquery) { 
+	    //MySQL connection
+    	// Defining variables for connection
+        $servername = getenv('IP');
+        $username = getenv('C9_USER');
+        $password = "";
+        $database = "votechat";
+        $dbport = 3306;
+        
+        // Create connection
+        $db = new mysqli($servername, $username, $password, $database, $dbport);
+        
+        // Check connection
+        if ($db->connect_error) {
+            die("Connection failed: " . $db->connect_error);
+        } 
+//        echo "Connected successfully (".$db->host_info.")";
 
-    // Create connection
-    $db = new mysqli($servername, $username, $password, $database, $dbport);
-
-    // Check connection
-    if ($db->connect_error) {
-        die("Connection failed: " . $db->connect_error);
-    } 
-    echo "Connected successfully (".$db->host_info.")";
-/*    
-    $query = "SELECT * FROM test";
-    $result = mysqli_query($db, $query);
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "The number is: " . $row['testinumero'];
-    }
-    */
+    	$result = mysqli_query($db, $sqlquery);
+    	if ($result===true) {
+    	    echo "Query successful";
+    	} else {
+        	while ($row = mysqli_fetch_assoc($result)) {
+        	    $jsonArray[] = $row;
+            }
+            echo json_encode($jsonArray);
+    	}
+        $db->close();
+	}
+    //esim: getFromDB("SELECT * FROM Comment WHERE CommentID=1");
 ?>
 
