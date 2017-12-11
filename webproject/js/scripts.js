@@ -118,7 +118,7 @@ function updateVote(urlparameter, para, voteid) {
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
-            document.cookie = "votestatus=voted"+voteid+"; path=/;";
+            document.cookie = "votestatus"+voteid+"=voted; path=/;";
             toVotepage(voteid);
         }
     };
@@ -140,7 +140,7 @@ function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, ur
                 var voter = document.createElement("button");
                 voter.innerHTML = "Vote!";
                 voter.setAttribute("id", jsonobj[x].VoteOptionID);
-                if (!(getCookie("votestatus")=="voted"+voteid)) {
+                if (!(getCookie("votestatus"+voteid)=="voted")) {
                     optionName.appendChild(voter);
                     document.getElementById(jsonobj[x].VoteOptionID).onclick=function() {updateVote("updatevoteoption", "?voteoption="+this.id+"&voteid="+voteid, voteid)};
                 }
