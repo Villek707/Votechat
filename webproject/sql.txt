@@ -1,3 +1,5 @@
+// SQL:n luontilauseet sekä muutamia kysely esimerkkejä
+
 // create vote table
 CREATE TABLE Vote (
 	VoteID int NOT NULL AUTO_INCREMENT,

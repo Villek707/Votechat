@@ -1,8 +1,8 @@
 /*
 TODO 
-    Nää pitää varmaa jossai vaiheessa vielä refactoroida MVC-mallin mukaiseksi... 
-    Viestien puhdistus
-    Lisää TODO artikkeleita
+    Send-funktiota voisi ehkä refaktoroida (En uskaltanu koskea, kun en oo ihan varma sen toiminnasta)
+    Muutamia kommentoituja juttuja, mutta ne voidaan ehkä saada toimimaan...
+    Muuten näyttäs ihan hyvältä
 */
 
 
@@ -24,7 +24,10 @@ window.onload = function() {
     document.getElementById("mainpage").addEventListener("click", toMainpage);
    // window.setInterval(loadChat(), 10000);
 };
-//=========================================== Sivunvaihtelu ===========================================
+
+
+//=========================================== Sivunvaihtelu funktiot ===========================================
+
 
 function toMainpage() {
     xmlhttpLoadVoteRooms("votes");
@@ -43,7 +46,7 @@ function toVotepage(voteid) {
 }
 
 
-//=========================================== Apufunktioita ===========================================
+//=========================================== XMLHttpRequest Apufunktioita ===========================================
 
 
 function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, url
@@ -75,7 +78,6 @@ function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, url
     xmlhttp.open("GET", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+"?voteid="+voteid, true);
     xmlhttp.send();
 }
-
 
 function xmlhttpLoadVoteRooms(urlparameter) { // url
     var xmlhttp = new XMLHttpRequest();
@@ -185,7 +187,9 @@ function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsons
     voteoptiontable json must contain VoteOption, VoteID
 */
 
-//=========================================== login alkaa tästä ==========================================
+
+//=========================================== login funktiot alkaa tästä ==========================================
+
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -276,7 +280,7 @@ function send() { //Viestin lähetys chattiin
 
 function loadChat(voteid) {
     var chatLog = document.getElementById("chatLog");
-    var messages = xmlhttpLoadChat("chatLog", "messages", voteid);
+    xmlhttpLoadChat("chatLog", "messages", voteid);
     
     for (var i = 0; i < chatLog.childElementCount; i++) {
         if (chatLog.children[i].getAttribute("id") != "" ) {
@@ -293,7 +297,7 @@ function loadChat(voteid) {
 
 
 
-//=========================================== Vote alkaa tästä ===========================================
+//=========================================== Äänestyksen funktiot alkaa tästä ===========================================
 
 function getVoteDetails(voteid) {
     xmlhttpGetHelper("voteName", "vote", "?voteid="+voteid);
@@ -326,8 +330,4 @@ function addVoteOption() {
         voteOptionInput.value = "";
         voteOptionInput.placeholder = "";
     }
-}
-
-function vote(id) {
-    voteOptionsArray[id].votes++;
 }

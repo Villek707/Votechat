@@ -1,6 +1,5 @@
 <?php
-    //=========================================== RESTAPI funktioita ===========================================
-# URI parser helper functions
+    //=========================================== RESTAPI:n URI käsittely funktioita ===========================================
 
     function getResource() {
         # returns numerically indexed array of URI parts
@@ -38,7 +37,10 @@
         return $method;
     }
  
-# Handlers for REST communication
+
+	//=========================================== Tietokannan ja REST:n käsittely funktioita ===========================================
+
+
 	function postMessage($parameters) {
 		#  POST /votechatapi/message?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
@@ -47,7 +49,7 @@
         VALUES ('".$json->UserName."', '".$json->Comment."', '".$json->VoteID."')");
 	}
     
-    
+/*    
 	function postVote($parameters) {
 		#  POST /votechatapi/vote?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
@@ -64,9 +66,8 @@
 		dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
         VALUES ('".$json->VoteOption."', '".$json->VoteID."')");
 	}
-    
+*/  
 	function postCreateVote($parameters) {
-		#  POST /votechatapi/voteoptiontable?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
 		dbAccess("INSERT INTO Vote (VoteName)
@@ -81,22 +82,18 @@
     }
     
 	function getMessages($parameters) {
-		#  GET /votechatapi/messages
 		dbAccess("SELECT * FROM Comment WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
 	
 	function getVotes() {
-		#  GET /votechatapi/vote
 		dbAccess("SELECT * FROM Vote"); 
 	}
 	
 	function getVoteOptionTable($parameters) {
-		#  GET /votechatapi/messages
 		dbAccess("SELECT * FROM VoteOptionTable WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
 	
 	function getVote($parameters) {
-		#  GET /votechatapi/vote
 		dbAccess("SELECT Votename FROM Vote WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
 	
@@ -104,8 +101,9 @@
 		dbAccess("UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOptionID='".$parameters["voteoption"]."' AND VoteID='".$parameters["voteid"]."'");
 	} 
 	
-# Main
-# ----
+
+	//=========================================== Ohjaus oikeille funktioille ===========================================
+
 
 	$resource = getResource();
     $request_method = getMethod();
@@ -115,19 +113,18 @@
 	if ($resource[0]=="votechatapi") {
     	if ($request_method=="POST" && $resource[1]=="message") {
         	postMessage($parameters);
-    	}
+    	}/*
     	else if ($request_method=="POST" && $resource[1]=="vote") {
 			postVote($parameters);
 		}
 		else if ($request_method=="POST" && $resource[1]=="voteoptiontable") {
 			postVoteOptionTable($parameters);
-		}
+		}*/
 		else if ($request_method=="POST" && $resource[1]=="createvote") {
 			postCreateVote($parameters);
 		}
 		else if ($request_method=="GET" && $resource[1]=="messages") {
 			getMessages($parameters);
-			//getFromDB("SELECT * FROM Comment WHERE CommentID=1");
 		}
 		
 		else if ($request_method=="GET" && $resource[1]=="vote") {
@@ -154,11 +151,12 @@
 		http_response_code(405); # Method not allowed
 	}
 	
-	//=========================================== MySQL funktioita ===========================================
-    //Selvisi sittenki, että kaikki tietokantakyselyt voidaan tehä yhel funktiol
+	
+	//=========================================== MySQL-kysely funktio ===========================================
+   
 	
 	function dbAccess($sqlquery) { 
-	    //MySQL connection
+	    // MySQL connection
     	// Defining variables for connection
         $servername = getenv('IP');
         $username = getenv('C9_USER');
@@ -173,7 +171,6 @@
         if ($db->connect_error) {
             die("Connection failed: " . $db->connect_error);
         } 
-//        echo "Connected successfully (".$db->host_info.")";
 
     	$result = mysqli_query($db, $sqlquery);
     	if ($result===true) {
@@ -189,6 +186,5 @@
     	}
         $db->close();
 	}
-    //esim: getFromDB("SELECT * FROM Comment WHERE CommentID=1");
 ?>
 
