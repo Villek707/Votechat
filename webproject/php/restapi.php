@@ -65,20 +65,44 @@
         VALUES ('".$json->VoteOption."', '".$json->VoteID."')");
 	}
     
-	function getMessages() {
+	function postCreateVote($parameters) {
+		#  POST /votechatapi/voteoptiontable?json=jsonstring
+		$jsonstring=urldecode($parameters["json"]);
+		$json = json_decode($jsonstring);
+		dbAccess("INSERT INTO Vote (VoteName)
+        VALUES ('".$json->VoteName."')");
+        $voteid = dbAccess("SELECT VoteID FROM Vote WHERE VoteName='".$json->VoteName."'");
+        print_r($json->VoteOption);
+        for ($i=0; $i < sizeof($json->VoteOption); $i++) { 
+			dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
+        	VALUES ('".$json->VoteOption[$i]->voteTitle."', '".$voteid[0][VoteID]."')");
+        }
+       	
+    }
+    
+	function getMessages($parameters) {
 		#  GET /votechatapi/messages
-		dbAccess("SELECT * FROM Comment"); 
+		dbAccess("SELECT * FROM Comment WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
 	
-	function getVote() {
-		#  GET /votechatapi/messages
+	function getVotes() {
+		#  GET /votechatapi/vote
 		dbAccess("SELECT * FROM Vote"); 
 	}
 	
-	function getVoteOptionTable() {
+	function getVoteOptionTable($parameters) {
 		#  GET /votechatapi/messages
-		dbAccess("SELECT * FROM VoteOptionTable"); 
+		dbAccess("SELECT * FROM VoteOptionTable WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
+	
+	function getVote($parameters) {
+		#  GET /votechatapi/vote
+		dbAccess("SELECT Votename FROM Vote WHERE VoteID='".$parameters["voteid"]."'"); 
+	}
+	
+	function updateVoteOption($parameters) {
+		dbAccess("UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOption='".voteoption."' AND VoteID='".voteid."'");
+	} 
 	
 # Main
 # ----
@@ -98,17 +122,30 @@
 		else if ($request_method=="POST" && $resource[1]=="voteoptiontable") {
 			postVoteOptionTable($parameters);
 		}
+		else if ($request_method=="POST" && $resource[1]=="createvote") {
+			postCreateVote($parameters);
+		}
 		else if ($request_method=="GET" && $resource[1]=="messages") {
-			getMessages();
+			getMessages($parameters);
 			//getFromDB("SELECT * FROM Comment WHERE CommentID=1");
 		}
 		
 		else if ($request_method=="GET" && $resource[1]=="vote") {
-			getVote();
+			getVote($parameters);
 		}
+		
+		else if ($request_method=="GET" && $resource[1]=="votes") {
+			getVotes();
+		}
+		
 		else if ($request_method=="GET" && $resource[1]=="voteoptiontable") {
-			getVoteOptionTable();
+			getVoteOptionTable($parameters);
 		}
+		
+		else if ($request_method=="GET" && $resource[1]=="updatevoteoption") {
+			updateVoteOption($parameters);
+		}
+		
 		else {
 			http_response_code(405); # Method not allowed
 		}
@@ -141,11 +178,14 @@
     	$result = mysqli_query($db, $sqlquery);
     	if ($result===true) {
     	    echo "Query successful";
+    	} else if ($result===false) {
+    		echo "Query failed";	
     	} else {
         	while ($row = mysqli_fetch_assoc($result)) {
         	    $jsonArray[] = $row;
             }
             echo json_encode($jsonArray);
+            return $jsonArray;
     	}
         $db->close();
 	}

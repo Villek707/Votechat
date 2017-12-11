@@ -7,10 +7,56 @@ TODO
     kuvaavampi nimi "kokonaisuus" classille på engelska... content? 
 */
 
+span {
+    color: red;
+}
+
+#login {
+    background-color: #f1f1f1;
+}
+
+#vote {
+    background-color: #f1f1f1;
+}
+
+#chat {
+    background-color: #f1f1f1;
+}
+
+#mainName {
+    background-color: #f1f1f1;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+
+
+#voteName {
+    background-color: #f1f1f1;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+
+
+#votesAndOptions {
+    background-color: #f1f1f1;
+    margin-left: 30px;
+    margin-right: 30px;    
+}
+
+.btto {
+    background-color: #f1f1f1;
+    margin-left: 30px;
+    margin-right: 30px; 
+}
+
 .scroll { 
     width: 20%;
     height: 20%;
     overflow: auto;
+    position: relative;
+    bottom: 0;
 }
 
 .kokonaisuus {
@@ -23,11 +69,23 @@ TODO
 }
 
 .myMessage {
-    float: right;
+    padding-top: 0px;
+    padding-bottom: 2px;
+    text-align: right;
 }
 
 .theirMessage {
-    float: left;
+    padding-top: 0px;
+    padding-bottom: 2px;
+    text-align: left;
+}
+
+.anon {
+    color: gray;
+    padding-top: 0px;
+    padding-bottom: 2px;
+    /*float: left;*/
+    text-align: left;
 }
 
 .voteOption {
