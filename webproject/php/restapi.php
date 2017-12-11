@@ -101,7 +101,7 @@
 	}
 	
 	function updateVoteOption($parameters) {
-		dbAccess("UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOption='".voteoption."' AND VoteID='".voteid."'");
+		dbAccess("UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOptionID='".$parameters["voteoption"]."' AND VoteID='".$parameters["voteid"]."'");
 	} 
 	
 # Main
@@ -142,7 +142,7 @@
 			getVoteOptionTable($parameters);
 		}
 		
-		else if ($request_method=="GET" && $resource[1]=="updatevoteoption") {
+		else if ($request_method=="POST" && $resource[1]=="updatevoteoption") {
 			updateVoteOption($parameters);
 		}
 		

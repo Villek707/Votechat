@@ -14,7 +14,6 @@ var userName;
 var currentRoomID;
 
 window.onload = function() {
-    window.setInterval(loadChat(), 10000);
     document.cookie = "username=anonymous; path=/;";
     loginCheck();
     toMainpage();
@@ -23,7 +22,7 @@ window.onload = function() {
     document.getElementById("addVoteOptionButton").addEventListener("click", addVoteOption);
     document.getElementById("createVoteButton").addEventListener("click", createNewVote);
     document.getElementById("mainpage").addEventListener("click", toMainpage);
-    window.setInterval(loadChat(), 10000);
+   // window.setInterval(loadChat(), 10000);
 };
 //=========================================== Sivunvaihtelu ===========================================
 
@@ -36,6 +35,9 @@ function toMainpage() {
 function toVotepage(voteid) {
 	document.getElementById('mainPage').style.display = 'none';
 	document.getElementById('votePage').style.display = 'block';
+	while (document.getElementById("option")) {
+	    document.getElementById('option').parentNode.removeChild(document.getElementById('option'));
+	}
 	getVoteDetails(voteid);
 	loadChat(voteid);
 }
@@ -75,7 +77,7 @@ function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, url
 }
 
 
-function xmlhttpLoadVoteRooms(urlparameter) { // id of the element, url
+function xmlhttpLoadVoteRooms(urlparameter) { // url
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -111,13 +113,51 @@ function xmlhttpLoadVoteRooms(urlparameter) { // id of the element, url
         xmlhttp.send();
     }
 
+function updateVote(urlparameter, para, voteid) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            console.log(xmlhttp.responseText);
+            document.cookie = "votestatus=voted"+voteid+"; path=/;";
+            toVotepage(voteid);
+        }
+    };
+    xmlhttp.open("POST", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+para, true);
+    xmlhttp.send();
+}
+
+function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, url, para for parameter
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            console.log(xmlhttp.responseText);
+            var jsonobj = JSON.parse(xmlhttp.responseText);
+            for (var x in jsonobj) {
+                var optionName = document.createElement("p");
+                optionName.setAttribute("id", "option");
+                optionName.innerHTML = jsonobj[x].VoteOption+": "+jsonobj[x].Votes+"    ";
+                document.getElementById(id).appendChild(optionName);
+                var voter = document.createElement("button");
+                voter.innerHTML = "Vote!";
+                voter.setAttribute("id", jsonobj[x].VoteOptionID);
+                if (!(getCookie("votestatus")=="voted"+voteid)) {
+                    optionName.appendChild(voter);
+                    document.getElementById(jsonobj[x].VoteOptionID).onclick=function() {updateVote("updatevoteoption", "?voteoption="+this.id+"&voteid="+voteid, voteid)};
+                }
+            }
+        }
+    };
+    xmlhttp.open("GET", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+para, true);
+    xmlhttp.send();
+}
+
 function xmlhttpGetHelper(id, urlparameter, para) { // id of the element, url, para for parameter
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
             var jsonobj = JSON.parse(xmlhttp.responseText);
-            var txt = xmlhttp.responseText;
+            var txt = jsonobj[0].Votename;
             document.getElementById(id).innerHTML = txt;
         }
     };
@@ -193,7 +233,7 @@ function loginCheck() {
         loginDiv.appendChild(loginText);
         loginDiv.appendChild(loginButton);
     }
-    loadChat();
+//    loadChat();
 }
 function login(){
     var loginID = document.getElementById("loginInput").value;
@@ -257,51 +297,18 @@ function loadChat(voteid) {
 
 function getVoteDetails(voteid) {
     xmlhttpGetHelper("voteName", "vote", "?voteid="+voteid);
-    xmlhttpGetHelper("votesAndOptions", "voteoptiontable", "?voteid="+voteid);
+    xmlhttpVoter("votesAndOptions", "voteoptiontable", "?voteid="+voteid, voteid);
 }
 
 function createNewVote() {
-    
     var voteTitle = document.getElementById("voteTitleInput").value;
-    var voteDiv = document.getElementById("vote");
-    voteDiv.innerHTML = "";
-    
-    var form = document.createElement("FORM");
-    var title = document.createElement("H1");
-    var titleText = document.createTextNode(voteTitle);
-    title.appendChild(titleText);
-    form.appendChild(title);
-    
-    var id;
-    
-    for (var i = 0; i < voteOptionsArray.length; i++) {
-         
-        var label = document.createElement("LABEL");
-        var input = document.createElement("INPUT");
-        var br = document.createElement("BR");
-        
-        var text = document.createTextNode(voteOptionsArray[i].voteTitle 
-        + " " + voteOptionsArray[i].votes);
-        input.setAttribute("id", i);
-        input.setAttribute("type", "radio");
-        label.appendChild(input);
-        label.appendChild(text);
-        label.appendChild(br);
-        form.appendChild(label);
-        id = i;
-        
-    
-        
-    }
-    var buttonText = document.createTextNode("Vote");
-    var voteButton = document.createElement("BUTTON");
-    voteButton.setAttribute("onclick", "vote(" + id + ")");
-    voteButton.appendChild(buttonText);
-    voteDiv.appendChild(form);
-    voteDiv.appendChild(voteButton);
     var messagejson = { "VoteName":voteTitle, "VoteOption":voteOptionsArray };
     var messagejsonstring = JSON.stringify(messagejson);
     xmlhttpPostHelper("createvote", (messagejsonstring));
+    document.getElementById("voteOptions").innerHTML = "";
+    document.getElementById("voteTitleInput").innerHTML = "";
+    voteOptionsArray = [];
+    xmlhttpLoadVoteRooms("votes");
 }
 
 
