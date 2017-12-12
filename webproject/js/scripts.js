@@ -22,8 +22,18 @@ window.onload = function() {
     document.getElementById("addVoteOptionButton").addEventListener("click", addVoteOption);
     document.getElementById("createVoteButton").addEventListener("click", createNewVote);
     document.getElementById("mainpage").addEventListener("click", toMainpage);
-   // window.setInterval(loadChat(), 10000);
 };
+
+function sanitizeText(text) {
+    var c;
+    for (var i = 0; i < text.length; i++) {
+        c = text.charAt(i); 
+        if (c == '<' || c == '>') {
+          text = text.slice(0, i) + text.slice(i+1);
+        } 
+    } 
+    return text;
+}
 
 
 //=========================================== Sivunvaihtelu funktiot ===========================================
@@ -85,8 +95,11 @@ function xmlhttpLoadVoteRooms(urlparameter) { // url
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
             var jsonobj = JSON.parse(xmlhttp.responseText);
-            var voteRooms = document.createElement("TABLE");
             
+            var vote = document.getElementById("voteRooms");
+            vote.innerHTML ="";
+            var voteRooms = document.createElement("TABLE");
+            voteRooms.setAttribute("align", "center");
             var dataInRow = 3;
             var i = 5;
             for (var x in jsonobj) {
@@ -95,18 +108,17 @@ function xmlhttpLoadVoteRooms(urlparameter) { // url
                     i = 0;
                 }
                     var voteRoom = document.createElement("TD");
-                    var voteRoomName = document.createTextNode(jsonobj[x].VoteID);
+                    var voteRoomName = document.createTextNode(jsonobj[x].VoteName);
                     voteRoom.setAttribute("id", ("voteRoom" + x));
                     var y=parseInt(x)+1;
                     voteRoom.setAttribute("onclick", "toVotepage(" + y + ")");
+                    voteRoom.setAttribute("class", "voteRoom");
                     voteRoom.appendChild(voteRoomName);
                     voteRoomsRow.appendChild(voteRoom);
                     voteRooms.appendChild(voteRoomsRow);
                     i++;
                 }
                 
-                var vote = document.getElementById("voteRooms");
-                vote.innerHTML ="";
                 vote.appendChild(voteRooms);
                 
             }
@@ -175,6 +187,7 @@ function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsons
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
+            loadChat(currentRoomID);
         }
     };
     xmlhttp.open("POST", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+"?json="+postparam, true);
@@ -241,6 +254,7 @@ function loginCheck() {
 }
 function login(){
     var loginID = document.getElementById("loginInput").value;
+    loginID = sanitizeText(loginID);
     document.cookie = "username="+loginID+"; path=/;";
     loginCheck();
 }
@@ -249,13 +263,14 @@ function logout(){
     loginCheck();
 }
 
-//=========================================== Chat alkaa tästä ===========================================
 
+//=========================================== Chat alkaa tästä ===========================================
 
 
 function send() { //Viestin lähetys chattiin
     var messageInput = document.getElementById("messageInput");
     var message = messageInput.value;
+    message = sanitizeText(message);
     if (message.length > 255) { //Leikataan viesti 255 merkkiseksi jos alkuperäinen viesti ylittää sen 
         message = message.slice(0, 255);
     } 
@@ -274,7 +289,7 @@ function send() { //Viestin lähetys chattiin
         messageInput.placeholder = "";
         chatLog.scrollTop = chatLog.scrollHeight; //Scrollaa chattia alas viestien kertyessä. !!Lisää " - chatLog.clientHeight;" koodiin jos lakkaa toimimasta jostain syystä
     }
-    loadChat(currentRoomID);
+//    loadChat(currentRoomID);
 }
 
 
@@ -295,9 +310,8 @@ function loadChat(voteid) {
 }
 
 
-
-
 //=========================================== Äänestyksen funktiot alkaa tästä ===========================================
+
 
 function getVoteDetails(voteid) {
     xmlhttpGetHelper("voteName", "vote", "?voteid="+voteid);
@@ -305,23 +319,30 @@ function getVoteDetails(voteid) {
 }
 
 function createNewVote() {
-    var voteTitle = document.getElementById("voteTitleInput").value;
-    var messagejson = { "VoteName":voteTitle, "VoteOption":voteOptionsArray };
-    var messagejsonstring = JSON.stringify(messagejson);
-    xmlhttpPostHelper("createvote", (messagejsonstring));
-    document.getElementById("voteOptions").innerHTML = "";
-    document.getElementById("voteTitleInput").innerHTML = "";
-    voteOptionsArray = [];
-    xmlhttpLoadVoteRooms("votes");
+    var voteTitleInput = document.getElementById("voteTitleInput");
+    
+    if (!(voteTitleInput.value == "")) {
+        var voteTitle = voteTitleInput.value;
+        voteTitle = sanitizeText(voteTitle);
+        
+        var messagejson = { "VoteName":voteTitle, "VoteOption":voteOptionsArray };
+        var messagejsonstring = JSON.stringify(messagejson);
+        xmlhttpPostHelper("createvote", (messagejsonstring));
+        
+        document.getElementById("voteOptions").innerHTML = "";
+        voteTitleInput.value = "";
+        voteOptionsArray = [];
+        xmlhttpLoadVoteRooms("votes");
+    }
 }
-
-
 
 function addVoteOption() {
     var voteOptionInput = document.getElementById("voteOptionInput");
     
     if (!(voteOptionInput.value == "")) {
-        var voteOption = {voteTitle: voteOptionInput.value, votes: 0};
+        var voteOptionVal = voteOptionInput.value;
+        voteOptionVal = sanitizeText(voteOptionVal);
+        var voteOption = {voteTitle: voteOptionVal, votes: 0};
         voteOptionsArray.push(voteOption);
         voteOptionsLog += "<p>" + voteOption.voteTitle + "<p>";
         var voteOptions = document.getElementById("voteOptions");
@@ -330,4 +351,10 @@ function addVoteOption() {
         voteOptionInput.value = "";
         voteOptionInput.placeholder = "";
     }
+}
+
+function graph(id) {
+    var graph = document.createElement("DIV");
+    graph.setAttribute("class", ("graph" + id));
+    
 }

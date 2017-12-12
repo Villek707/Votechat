@@ -40,43 +40,98 @@
 
 	//=========================================== Tietokannan ja REST:n käsittely funktioita ===========================================
 
-
+// Tein posteille SQL-injektio turvalliset funktiot
 	function postMessage($parameters) {
 		#  POST /votechatapi/message?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
-		dbAccess("INSERT INTO Comment (UserName, Comment, VoteID)
-        VALUES ('".$json->UserName."', '".$json->Comment."', '".$json->VoteID."')");
+//		dbAccess("INSERT INTO Comment (UserName, Comment, VoteID)
+//        VALUES ('".$json->UserName."', '".$json->Comment."', '".$json->VoteID."')");
+        
+        // MySQL connection
+    	// Defining variables for connection
+        $servername = getenv('IP');
+        $username = getenv('C9_USER');
+        $password = "";
+        $database = "votechat";
+        $dbport = 3306;
+        
+        // Create connection
+        $db = new mysqli($servername, $username, $password, $database, $dbport);
+        
+        // Check connection
+        if ($db->connect_error) {
+            die("Connection failed: " . $db->connect_error);
+        } 
+        
+        $name = $json->UserName;
+        $comment = $json->Comment;
+        $id = $json->VoteID;
+        
+		$stmt = $db->prepare("INSERT INTO Comment (UserName, Comment, VoteID)
+        VALUES (?, ?, ?)");
+		$stmt->bind_param('ssi', $name, $comment, $id);
+		
+		$stmt->execute();
 	}
-    
-/*    
-	function postVote($parameters) {
-		#  POST /votechatapi/vote?json=jsonstring
-		$jsonstring=urldecode($parameters["json"]);
-		$json = json_decode($jsonstring);
-		dbAccess("INSERT INTO Vote (VoteName)
-        VALUES ('".$json->VoteName."')");
-	}
-	
-	
-	function postVoteOptionTable($parameters) {
-		#  POST /votechatapi/voteoptiontable?json=jsonstring
-		$jsonstring=urldecode($parameters["json"]);
-		$json = json_decode($jsonstring);
-		dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
-        VALUES ('".$json->VoteOption."', '".$json->VoteID."')");
-	}
-*/  
+
 	function postCreateVote($parameters) {
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
-		dbAccess("INSERT INTO Vote (VoteName)
-        VALUES ('".$json->VoteName."')");
+//		dbAccess("INSERT INTO Vote (VoteName)
+//        VALUES ('".$json->VoteName."')");
+        // MySQL connection
+		// Defining variables for connection
+	    $servername = getenv('IP');
+	    $username = getenv('C9_USER');
+	    $password = "";
+	    $database = "votechat";
+	    $dbport = 3306;
+	        
+	    // Create connection
+	    $db = new mysqli($servername, $username, $password, $database, $dbport);
+	        
+	    // Check connection
+	    if ($db->connect_error) {
+	        die("Connection failed: " . $db->connect_error);
+	    } 
+	        
+	    $vname = $json->VoteName;
+	        
+		$stmt = $db->prepare("INSERT INTO Vote (VoteName)
+      	VALUES (?)");
+		$stmt->bind_param('s', $vname);
+		
+		$stmt->execute();
         $voteid = dbAccess("SELECT VoteID FROM Vote WHERE VoteName='".$json->VoteName."'");
-        print_r($json->VoteOption);
         for ($i=0; $i < sizeof($json->VoteOption); $i++) { 
-			dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
-        	VALUES ('".$json->VoteOption[$i]->voteTitle."', '".$voteid[0][VoteID]."')");
+//			dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
+//        	VALUES ('".$json->VoteOption[$i]->voteTitle."', '".$voteid[0][VoteID]."')");
+        	
+	        // MySQL connection
+	    	// Defining variables for connection
+	        $servername = getenv('IP');
+	        $username = getenv('C9_USER');
+	        $password = "";
+	        $database = "votechat";
+	        $dbport = 3306;
+	        
+	        // Create connection
+	        $db = new mysqli($servername, $username, $password, $database, $dbport);
+	        
+	        // Check connection
+	        if ($db->connect_error) {
+	            die("Connection failed: " . $db->connect_error);
+	        } 
+	        
+	        $option = $json->VoteOption[$i]->voteTitle;
+	        $id = $voteid[0][VoteID];
+	        
+			$stmt = $db->prepare("INSERT INTO VoteOptionTable (VoteOption, VoteID)
+        	VALUES (?, ?)");
+			$stmt->bind_param('si', $option, $id);
+			
+			$stmt->execute();
         }
        	
     }
@@ -113,13 +168,7 @@
 	if ($resource[0]=="votechatapi") {
     	if ($request_method=="POST" && $resource[1]=="message") {
         	postMessage($parameters);
-    	}/*
-    	else if ($request_method=="POST" && $resource[1]=="vote") {
-			postVote($parameters);
-		}
-		else if ($request_method=="POST" && $resource[1]=="voteoptiontable") {
-			postVoteOptionTable($parameters);
-		}*/
+    	}
 		else if ($request_method=="POST" && $resource[1]=="createvote") {
 			postCreateVote($parameters);
 		}
@@ -152,7 +201,7 @@
 	}
 	
 	
-	//=========================================== MySQL-kysely funktio ===========================================
+	//=========================================== MySQL-kysely funktiot ===========================================
    
 	
 	function dbAccess($sqlquery) { 
@@ -181,6 +230,7 @@
         	while ($row = mysqli_fetch_assoc($result)) {
         	    $jsonArray[] = $row;
             }
+            
             echo json_encode($jsonArray);
             return $jsonArray;
     	}

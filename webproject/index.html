@@ -9,16 +9,21 @@
 <html>
 <head>
 <meta charset="utf-8">    
+<!-- Voi olla että bootstrap säätää jotain ton oman css kanssa ja aiheuttaa ongelmia, en oo ihan varma, mutta mulla tuli consoleen paljon virheitä. Bootstrap täytyy kuitenki lataa olla referencettuna eka, jotta se toimii
+-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 <link href="css/css.css" type="text/css" rel="stylesheet" />
 <title>Äänestys & keskustelu</title>
 </head>
 
 <body>
     <script type="text/javascript" src="js/scripts.js"></script>
+    
     <main>
+        <div id="container">
 		<div id="mainPage">
-			<h2 id="mainName">Mainpage</h2>
-    	    <div id="vote" class="kokonaisuus">
+			<h2 id="mainName">Chat&Vote</h2>
+    	    <div id="vote" class="kokonaisuus">Create a poll!
                 <div id="voteOptions">
                 </div>
                 <div>
@@ -28,7 +33,8 @@
                 <button id="createVoteButton">Create vote</button>
                 </div>
             </div>
-			<div id="voteRooms" class="btto">No ongoing votes</div>
+            <div id="ongoingVotes">Ongoing Polls</div>
+			<div id="voteRooms" class="btto">No ongoing polls</div>
 		</div>
 		
 		<div id="votePage">
@@ -37,7 +43,7 @@
 			<div id="login" class="kokonaisuus">
         
             </div>
-            <div id="chat" class="kokonaisuus">
+            <div id="chat" class="kokonaisuus" align="center">
                 <div id="chatLog" class="scroll">
                     Messages go here
                 </div>
@@ -47,7 +53,7 @@
             <button id="mainpage" class="btto">Back</button>
 		</div>
 	</main>
-    
+    </div>
 </body>
 
 </html>
