@@ -1,10 +1,3 @@
-/*
-TODO 
-    Send-funktiota voisi ehkä refaktoroida (En uskaltanu koskea, kun en oo ihan varma sen toiminnasta)
-    Muutamia kommentoituja juttuja, mutta ne voidaan ehkä saada toimimaan...
-    Muuten näyttäs ihan hyvältä
-*/
-
 
 var messageLog = "";
 var voteOptionsLog = "";
@@ -12,6 +5,7 @@ var voteOptionsArray = [];
 var votes = [];
 var userName;
 var currentRoomID;
+var interval;
 
 window.onload = function() {
     document.cookie = "username=anonymous; path=/;";
@@ -22,6 +16,7 @@ window.onload = function() {
     document.getElementById("addVoteOptionButton").addEventListener("click", addVoteOption);
     document.getElementById("createVoteButton").addEventListener("click", createNewVote);
     document.getElementById("mainpage").addEventListener("click", toMainpage);
+    setInterval(update, 500);
 };
 
 function sanitizeText(text) {
@@ -43,16 +38,26 @@ function toMainpage() {
     xmlhttpLoadVoteRooms("votes");
     document.getElementById('votePage').style.display = 'none';
 	document.getElementById('mainPage').style.display = 'block';
+	clearInterval(interval);
+    currentRoomID = -1;
 }
 
 function toVotepage(voteid) {
 	document.getElementById('mainPage').style.display = 'none';
 	document.getElementById('votePage').style.display = 'block';
-	while (document.getElementById("option")) {
-	    document.getElementById('option').parentNode.removeChild(document.getElementById('option'));
-	}
 	getVoteDetails(voteid);
 	loadChat(voteid);
+}
+
+
+
+function update() {
+    if (currentRoomID == -1) {
+         xmlhttpLoadVoteRooms("votes");
+    } else {
+        toVotepage(currentRoomID);
+        
+    }
 }
 
 
@@ -146,6 +151,7 @@ function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, ur
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             console.log(xmlhttp.responseText);
             var jsonobj = JSON.parse(xmlhttp.responseText);
+            document.getElementById(id).innerHTML="";
             for (var x in jsonobj) {
                 var optionName = document.createElement("p");
                 optionName.setAttribute("id", "option");
@@ -154,6 +160,7 @@ function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, ur
                 var voter = document.createElement("button");
                 voter.innerHTML = "Vote!";
                 voter.setAttribute("id", jsonobj[x].VoteOptionID);
+                voter.setAttribute("class", "voteoptionbutton");
                 if (!(getCookie("votestatus"+voteid)=="voted")) {
                     optionName.appendChild(voter);
                     document.getElementById(jsonobj[x].VoteOptionID).onclick=function() {updateVote("updatevoteoption", "?voteoption="+this.id+"&voteid="+voteid, voteid)};
@@ -178,9 +185,6 @@ function xmlhttpGetHelper(id, urlparameter, para) { // id of the element, url, p
     xmlhttp.open("GET", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+para, true);
     xmlhttp.send();
 }
-/* xmlhttpGetHelper toimintoja 
-    urlparameter = messages, vote, voteoptiontable
-*/
 
 function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsonstring
     var xmlhttp = new XMLHttpRequest();
@@ -193,12 +197,6 @@ function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsons
     xmlhttp.open("POST", "https://gittutorial-villek.c9users.io/votechatapi/"+urlparameter+"?json="+postparam, true);
     xmlhttp.send();
 }
-/* xmlhttpPostHelper toimintoja 
-    urlparameter = message, vote, voteoptiontable
-    message json must contain UserName, Comment, VoteID
-    vote json must contain VoteName
-    voteoptiontable json must contain VoteOption, VoteID
-*/
 
 
 //=========================================== login funktiot alkaa tästä ==========================================
@@ -250,7 +248,6 @@ function loginCheck() {
         loginDiv.appendChild(loginText);
         loginDiv.appendChild(loginButton);
     }
-//    loadChat();
 }
 function login(){
     var loginID = document.getElementById("loginInput").value;
@@ -277,36 +274,18 @@ function send() { //Viestin lähetys chattiin
     var messagejson = { "UserName":getCookie("username"), "Comment":message, "VoteID":currentRoomID }; //Tässä on template kommenteille, tohon usernamen tilalle laitetaan sitte cookiest haettu nimi ja voteid:hen laitetaan tiettyyn äänestykseen liittyvän äänestyksen id
     var messagejsonstring = JSON.stringify(messagejson);
     xmlhttpPostHelper("message", (messagejsonstring));
-    
-    if (!(message == "")) { //Viestin lähetys logiikka. !!Turvallisuus syistä vertailuun vois laittaa kans jotai millä kattoo ettei viesti sisällä < > merkkejä. 
-        //messageLog += '<p class="message">' + message + '</p><br>'; //Onkohan tää paras tapa tehdä tää uusi viesti :thinking:
-        messageLog += '<p id=comment' + userName + ' class="message">' + message + '</p><br>'; //Onkohan tää paras tapa tehdä tää uusi viesti :thinking:
+    if (!(message == "")) { //Viestin lähetys logiikka. 
         var chatLog = document.getElementById("chatLog");
-        chatLog.innerHTML = messageLog; 
-        
         //Kosmeettisia muutoksia 
         messageInput.value = "";
         messageInput.placeholder = "";
-        chatLog.scrollTop = chatLog.scrollHeight; //Scrollaa chattia alas viestien kertyessä. !!Lisää " - chatLog.clientHeight;" koodiin jos lakkaa toimimasta jostain syystä
-    }
-//    loadChat(currentRoomID);
+        chatLog.scrollTop = chatLog.scrollHeight; //Scrollaa chattia alas viestien kertyessä.
+        }
 }
 
 
 function loadChat(voteid) {
-    var chatLog = document.getElementById("chatLog");
     xmlhttpLoadChat("chatLog", "messages", voteid);
-    
-    for (var i = 0; i < chatLog.childElementCount; i++) {
-        if (chatLog.children[i].getAttribute("id") != "" ) {
-            
-            if (chatLog.children[i].getAttribute("id") == ("comment" + userName)) {
-                chatLog.children[i].setAttribute("class", "myMessage");
-            } else {
-                chatLog.children[i].setAttribute("class", "theirMessage");
-            }
-        } 
-    }
 }
 
 
@@ -325,7 +304,7 @@ function createNewVote() {
         var voteTitle = voteTitleInput.value;
         voteTitle = sanitizeText(voteTitle);
         
-        var messagejson = { "VoteName":voteTitle, "VoteOption":voteOptionsArray };
+        var messagejson = { "VoteName":voteTitle, "VoteOption":voteOptionsArray }; //Tässä on äänestyksen luonti json
         var messagejsonstring = JSON.stringify(messagejson);
         xmlhttpPostHelper("createvote", (messagejsonstring));
         
@@ -351,10 +330,4 @@ function addVoteOption() {
         voteOptionInput.value = "";
         voteOptionInput.placeholder = "";
     }
-}
-
-function graph(id) {
-    var graph = document.createElement("DIV");
-    graph.setAttribute("class", ("graph" + id));
-    
 }

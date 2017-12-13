@@ -1,19 +1,9 @@
-<!-- TODO
-    Rakennetta vois hieman katsoa
-        Onhan se nytkin ihan ok, mutta vois katella erilaisia toteutuksia.
-    Title paremmaksi kun "Äänestys ja keskustelu"
-    Sivun tekstejä, kuten Mainpage vois kans vaihtaa hieman
-    Sivun Layout ja CSS vaatii parantelua
-//-->
-
 <html>
 <head>
 <meta charset="utf-8">    
-<!-- Voi olla että bootstrap säätää jotain ton oman css kanssa ja aiheuttaa ongelmia, en oo ihan varma, mutta mulla tuli consoleen paljon virheitä. Bootstrap täytyy kuitenki lataa olla referencettuna eka, jotta se toimii
--->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 <link href="css/css.css" type="text/css" rel="stylesheet" />
-<title>Äänestys & keskustelu</title>
+<link rel="icon" href="favicon.png">
+<title>Vote & Chat</title>
 </head>
 
 <body>
@@ -22,7 +12,7 @@
     <main>
         <div id="container">
 		<div id="mainPage">
-			<h2 id="mainName">Chat&Vote</h2>
+			<h2 id="mainName">Vote&Chat</h2>
     	    <div id="vote" class="kokonaisuus">Create a poll!
                 <div id="voteOptions">
                 </div>
@@ -39,11 +29,14 @@
 		
 		<div id="votePage">
 			<h2 id="voteName">Voting name</h2>
-			<div id="votesAndOptions">Voting options:</div>
+			<div id="votesoptionsoptions">
+    			<div>Voting options:</div>
+    			<div id="votesAndOptions">Voting options:</div>
+			</div>
 			<div id="login" class="kokonaisuus">
         
             </div>
-            <div id="chat" class="kokonaisuus" align="center">
+            <div id="chat" class="kokonaisuus" align="center">Chat
                 <div id="chatLog" class="scroll">
                     Messages go here
                 </div>

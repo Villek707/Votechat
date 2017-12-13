@@ -45,9 +45,6 @@
 		#  POST /votechatapi/message?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
-//		dbAccess("INSERT INTO Comment (UserName, Comment, VoteID)
-//        VALUES ('".$json->UserName."', '".$json->Comment."', '".$json->VoteID."')");
-        
         // MySQL connection
     	// Defining variables for connection
         $servername = getenv('IP');
@@ -78,8 +75,6 @@
 	function postCreateVote($parameters) {
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
-//		dbAccess("INSERT INTO Vote (VoteName)
-//        VALUES ('".$json->VoteName."')");
         // MySQL connection
 		// Defining variables for connection
 	    $servername = getenv('IP');
@@ -105,9 +100,6 @@
 		$stmt->execute();
         $voteid = dbAccess("SELECT VoteID FROM Vote WHERE VoteName='".$json->VoteName."'");
         for ($i=0; $i < sizeof($json->VoteOption); $i++) { 
-//			dbAccess("INSERT INTO VoteOptionTable (VoteOption, VoteID)
-//        	VALUES ('".$json->VoteOption[$i]->voteTitle."', '".$voteid[0][VoteID]."')");
-        	
 	        // MySQL connection
 	    	// Defining variables for connection
 	        $servername = getenv('IP');
@@ -231,7 +223,7 @@
         	    $jsonArray[] = $row;
             }
             
-            echo json_encode($jsonArray);
+            echo json_encode($jsonArray); //json saadaan suoraan kyselystä taulukkoon sijoittamalla ja encodella
             return $jsonArray;
     	}
         $db->close();
