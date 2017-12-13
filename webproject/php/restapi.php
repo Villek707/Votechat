@@ -41,6 +41,7 @@
 	//=========================================== Tietokannan ja REST:n käsittely funktioita ===========================================
 
 // Tein posteille SQL-injektio turvalliset funktiot
+// Tarkistaa kyselyn ja sijoittaa tietokantaan REST apin parametritiedot eli viestit
 	function postMessage($parameters) {
 		#  POST /votechatapi/message?json=jsonstring
 		$jsonstring=urldecode($parameters["json"]);
@@ -72,6 +73,7 @@
 		$stmt->execute();
 	}
 
+// Tarkistaa kyselyn ja sijoittaa tietokantaan REST apin parametritiedot eli äänestystiedot
 	function postCreateVote($parameters) {
 		$jsonstring=urldecode($parameters["json"]);
 		$json = json_decode($jsonstring);
@@ -127,7 +129,8 @@
         }
        	
     }
-    
+
+//Tietokannan hakukyselyitä    
 	function getMessages($parameters) {
 		dbAccess("SELECT * FROM Comment WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
@@ -144,13 +147,14 @@
 		dbAccess("SELECT Votename FROM Vote WHERE VoteID='".$parameters["voteid"]."'"); 
 	}
 	
+//Päivittää äänestyksen vaihtoehdon äänimäärän
 	function updateVoteOption($parameters) {
 		dbAccess("UPDATE VoteOptionTable SET Votes = Votes + 1 WHERE VoteOptionID='".$parameters["voteoption"]."' AND VoteID='".$parameters["voteid"]."'");
 	} 
 	
 
 	//=========================================== Ohjaus oikeille funktioille ===========================================
-
+	//Eli REST apin käyttötoiminnot
 
 	$resource = getResource();
     $request_method = getMethod();
@@ -195,7 +199,7 @@
 	
 	//=========================================== MySQL-kysely funktiot ===========================================
    
-	
+	//Yleinen tietokannan kyselyfunktio, ei tee parametrized statementteja eli ei käytetä kyselyihin, joissa on mahdollisuus käyttäjäpuolen vaikutukseen (SQL injektio)
 	function dbAccess($sqlquery) { 
 	    // MySQL connection
     	// Defining variables for connection

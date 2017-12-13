@@ -18,7 +18,7 @@ window.onload = function() {
     document.getElementById("mainpage").addEventListener("click", toMainpage);
     setInterval(update, 500);
 };
-
+//Puhdistaa viestit html-tageista
 function sanitizeText(text) {
     var c;
     for (var i = 0; i < text.length; i++) {
@@ -33,7 +33,7 @@ function sanitizeText(text) {
 
 //=========================================== Sivunvaihtelu funktiot ===========================================
 
-
+//Tuo esiin pääsivun ja piilottaa äänestyssivun
 function toMainpage() {
     xmlhttpLoadVoteRooms("votes");
     document.getElementById('votePage').style.display = 'none';
@@ -42,6 +42,7 @@ function toMainpage() {
     currentRoomID = -1;
 }
 
+//Tuo esiin äänestyssivun ja piilottaa pääsivun
 function toVotepage(voteid) {
 	document.getElementById('mainPage').style.display = 'none';
 	document.getElementById('votePage').style.display = 'block';
@@ -50,7 +51,7 @@ function toVotepage(voteid) {
 }
 
 
-
+//Päivittää äänestyksen ja keskustelun (Kutsutaan puolen sekunnin välein)
 function update() {
     if (currentRoomID == -1) {
          xmlhttpLoadVoteRooms("votes");
@@ -63,8 +64,8 @@ function update() {
 
 //=========================================== XMLHttpRequest Apufunktioita ===========================================
 
-
-function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, url
+//Lataa chatin hakemalla sen palvelinpuolelta MySQL tietokannasta xmlhttprequestilla
+function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, restapiurl, huoneen äänestysid
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -94,6 +95,7 @@ function xmlhttpLoadChat(id, urlparameter, voteid) { // id of the element, url
     xmlhttp.send();
 }
 
+//Lataa pääsivulla äänestykset eli hakee tietokannasta xmlhttprequestilla restapin kautta kaikki äänestykset
 function xmlhttpLoadVoteRooms(urlparameter) { // url
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -132,6 +134,7 @@ function xmlhttpLoadVoteRooms(urlparameter) { // url
         xmlhttp.send();
     }
 
+// Apufunktio xmlhttpVoterille tekee POST pyynnön REST apille xmlhttprequestilla joka sitten päivittää tietyn äänestyksen valintavaihtoehdon äänimäärän lisäämällä yhden
 function updateVote(urlparameter, para, voteid) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -145,7 +148,8 @@ function updateVote(urlparameter, para, voteid) {
     xmlhttp.send();
 }
 
-function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, url, para for parameter
+//Luo äänestyshuoneeseen näkyville äänestyksen vaihtoehdot ja äänestysnapin hakemalla ne xmlhttprequestilla REST API:n kautta tietokannasta.
+function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, url, para for parameter, huoneen äänestys id
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -172,6 +176,7 @@ function xmlhttpVoter(id, urlparameter, para, voteid) { // id of the element, ur
     xmlhttp.send();
 }
 
+//Yleinen hakufunktio joka xmlhttprequestilla REST apin kautta hakee parametrina annetun asian
 function xmlhttpGetHelper(id, urlparameter, para) { // id of the element, url, para for parameter
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -186,6 +191,7 @@ function xmlhttpGetHelper(id, urlparameter, para) { // id of the element, url, p
     xmlhttp.send();
 }
 
+//Yleinen POST funktio, jolla lähetetään jsoneita parametrina eli postaa REST apin kautta tietokantaan esimerkiksi viestejä
 function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsonstring
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -201,7 +207,7 @@ function xmlhttpPostHelper(urlparameter, postparam) {  // url, postparam = jsons
 
 //=========================================== login funktiot alkaa tästä ==========================================
 
-
+//Palauttaa cookien arvon
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -218,6 +224,8 @@ function getCookie(cname) {
     return "";
 }
 
+
+//Tarkastaa käyttäjän
 function loginCheck() {
     userName = getCookie("username");
     var loginDiv = document.getElementById("login");
@@ -249,12 +257,16 @@ function loginCheck() {
         loginDiv.appendChild(loginButton);
     }
 }
+
+//Kirjautuu sisään eli luo cookien
 function login(){
     var loginID = document.getElementById("loginInput").value;
     loginID = sanitizeText(loginID);
     document.cookie = "username="+loginID+"; path=/;";
     loginCheck();
 }
+
+//Kirjautuu ulos, resettaa cookien anonymoukseksi
 function logout(){
     document.cookie = "username=anonymous; path=/;";
     loginCheck();
@@ -283,7 +295,7 @@ function send() { //Viestin lähetys chattiin
         }
 }
 
-
+//kutsuu xmlhttpLoadChatin
 function loadChat(voteid) {
     xmlhttpLoadChat("chatLog", "messages", voteid);
 }
@@ -291,12 +303,13 @@ function loadChat(voteid) {
 
 //=========================================== Äänestyksen funktiot alkaa tästä ===========================================
 
-
+//Hakee äänestyssivulle titlen sekä äänestysvaihtoehdot kutsumalla funktioita
 function getVoteDetails(voteid) {
     xmlhttpGetHelper("voteName", "vote", "?voteid="+voteid);
     xmlhttpVoter("votesAndOptions", "voteoptiontable", "?voteid="+voteid, voteid);
 }
 
+//Luo uuden äänestyksen lähettämällä annetut tiedot jsonina xmlhttprequestilla REST apin kautta tietokantaan ja päivittää mainsivun
 function createNewVote() {
     var voteTitleInput = document.getElementById("voteTitleInput");
     
@@ -315,6 +328,7 @@ function createNewVote() {
     }
 }
 
+//Funktio äänestyksen luonnissa lisättävien äänestys vaihtoehtojen kirjaamiseksi
 function addVoteOption() {
     var voteOptionInput = document.getElementById("voteOptionInput");
     
